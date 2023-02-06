@@ -55,7 +55,14 @@ class Game:
 	
 	def pieceInIllegalPos(self, piece: Piece):
 		pieceInGrid = piece.petrify()
-		pass
+		for y in range(len(pieceInGrid)):
+			for x in range(len(pieceInGrid[y])):
+				if pieceInGrid[y][x] == 1:
+					if not x in range(self.width) or not y in range(self.height):
+						return False
+					if self.board[y][x] == 1:
+						return False
+		return True
 
 	def update(self):
 		if (self.activePieceIsEmpty()):
