@@ -4,13 +4,27 @@ import random
 
 # This class describes the Tetris game from an abstract point of view
 class Game:
+	# The constructor. Saves parameters such as board dimensions in
+	# fields for later use, defines piece shapes,
+	# prepares for first run of update()
 	def __init__(self, width=10, height=20) -> None:
+		# This line may be omitted, just makes things clearer.
+		# The game board is a list of lists (rows) of tuples,
+		# where the first item indicates whether there is a block
+		# at that position, and the second indicates the colour
 		self.board = list[list[tuple[int, int]]]
+		# Iterate over every possible coordinate on the board
+		# and make sure it is accessible. This is needed
+		# when the active piece becomes part of the board
+		# or the validity of a position must be checked.
 		for y in range(height):
 			for x in range(width):
 				self.board.append((0, -1))
+		# Save the board dimensions.
 		self.width = width
 		self.height = height
+		# Define the pieces that may spawn.
+		# A 1 indicates a block and a 0 emptiness.
 		self.pieces = [
 			[
 			[0,1,0],
@@ -37,6 +51,8 @@ class Game:
 			[1]
 			]
 		]
+		# Put the active piece (the one you're controlling) in a state
+		# in which it is recognised as 'empty
 		self.emptyActivePiece()
 
 	def emptyActivePiece(self):
@@ -74,10 +90,10 @@ class Game:
 			if (self.pieceInIllegalPos(self.activePiece)):
 				# Game over
 				pass
-			nextStagePiece = copy.deepcopy(self.activePiece)
-			nextStagePiece.pos[1] = nextStagePiece.pos[1] + 1
-			if self.pieceInIllegalPos(nextStagePiece):
-				self.activePieceToBoard()
+		nextStagePiece = copy.deepcopy(self.activePiece)
+		nextStagePiece.pos[1] = nextStagePiece.pos[1] + 1
+		if self.pieceInIllegalPos(nextStagePiece):
+			self.activePieceToBoard()
 
 	
 	def turnActivePiece(self, turn):
