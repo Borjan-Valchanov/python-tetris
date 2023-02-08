@@ -52,9 +52,10 @@ class Game:
 			]
 		]
 		# Put the active piece (the one you're controlling) in a state
-		# in which it is recognised as 'empty
+		# in which it is recognised as 'empty'
 		self.emptyActivePiece()
 
+	# Make the active piece appear 'empty', so a new one is created
 	def emptyActivePiece(self):
 		self.activePiece = Piece((0,0),[[0]],-1)
 
@@ -81,7 +82,12 @@ class Game:
 		self.emptyActivePiece()
 
 	def update(self):
-		if (self.activePieceIsEmpty()):
+		if not self.activePieceIsEmpty():
+			nextStagePiece = copy.deepcopy(self.activePiece)
+			nextStagePiece.pos[1] = nextStagePiece.pos[1] + 1
+			if self.pieceInIllegalPos(nextStagePiece):
+				self.activePieceToBoard()
+		if self.activePieceIsEmpty():
 			piece_type = random.randrange(0, len(self.pieces))
 			height = len(self.pieces[piece_type])
 			width = len(self.pieces[piece_type][0])
@@ -90,10 +96,6 @@ class Game:
 			if (self.pieceInIllegalPos(self.activePiece)):
 				# Game over
 				pass
-		nextStagePiece = copy.deepcopy(self.activePiece)
-		nextStagePiece.pos[1] = nextStagePiece.pos[1] + 1
-		if self.pieceInIllegalPos(nextStagePiece):
-			self.activePieceToBoard()
 
 	
 	def turnActivePiece(self, turn):
