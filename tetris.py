@@ -84,6 +84,9 @@ class Piece:
 	
 	def petrify(self):
 		petrifiedStructure: list[list[int]] = []
+		width = len(self.structure[0])
+		height = len(self.structure)
+		petrifiedStructure = initialiseMNMatrix(width + self.pos.x, height + self.pos.y)
 		for y in range(len(self.structure)):
 			for x in range(len(self.structure[y])):
 				blockCoord = (x,y)
@@ -102,11 +105,17 @@ class Piece:
 				self.structure = rotateMatrixCCW(self.structure)
 		pass
 
+def initialiseMNMatrix(m, n):
+	matrix = []
+	for i in range(n):
+		matrix.append([m])
+	return matrix
 
 def rotateMatrixCW(matrix: list[list[int]]):
 	rotatedMatrix: list[list[int]]
 	max_y = len(matrix[0]) - 1
 	max_x = len(matrix) - 1
+	rotatedMatrix = initialiseMNMatrix(max_x + 1, max_y + y)
 	for y in range(max_y + 1):
 		for x in range(max_x + 1):
 			rotatedMatrix[x][y] = matrix[y][x]
@@ -116,6 +125,7 @@ def rotateMatrixCCW(matrix: list[list[int]]):
 	rotatedMatrix: list[list[int]]
 	max_y = len(matrix[0]) - 1
 	max_x = len(matrix) - 1
+	rotatedMatrix = initialiseMNMatrix(max_x + 1, max_y + y)
 	for y in range(max_y + 1):
 		for x in range(max_x + 1):
 			rotatedMatrix[max_y - x][y]
