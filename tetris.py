@@ -5,7 +5,10 @@ import random
 # This class describes the Tetris game from an abstract point of view
 class Game:
 	def __init__(self, width=10, height=20) -> None:
-		self.board = list[list[width]]
+		self.board = list[list[tuple[int, int]]]
+		for y in range(height):
+			for x in range(width):
+				self.board.append((0, -1))
 		self.width = width
 		self.height = height
 		self.pieces = [
@@ -58,7 +61,7 @@ class Game:
 		for y in range(self.height):
 			for x in range(self.width):
 				if petrifiedStructure[y][x] == 1:
-					self.board[y][x] = 1
+					self.board[y][x] = (1, self.activePiece.piece_type)
 		self.emptyActivePiece()
 
 	def update(self):
