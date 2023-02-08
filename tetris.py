@@ -10,30 +10,30 @@ class Game:
 		self.pieces = [
 			[
 			[0,1,0],
-			[1,1,1],
-			[0,0,0]
+			[1,1,1]
 			],
 			[
-			[0,1,0],
-			[1,1,0],
-			[1,0,0]
+			[0,1],
+			[1,1],
+			[1,0]
 			],
 			[
-			[1,0,0],
-			[1,1,0],
-			[0,1,0]
+			[1,0],
+			[1,1],
+			[0,1]
 			],
 			[
 			[1,1],
 			[1,1]
 			],
 			[
-			[0,1,0,0],
-			[0,1,0,0],
-			[0,1,0,0],
-			[0,1,0,0]
+			[1],
+			[1],
+			[1],
+			[1]
 			]
 		]
+		self.turn = 0
 		# I already defined the colours because I wanted to, but this
 		# will have to go in the tetris UI package's GameUI class
 		"""
@@ -71,7 +71,9 @@ class Game:
 			start_x = math.floor((self.width - dimension) / 2)
 			start_y = math.ceil(dimension / 2)
 			if (self.pieceInIllegalPos(self.activePiece)):
+				# Game over
 				pass
+			
 
 # This class describes a piece in Tetris
 class Piece:
@@ -89,3 +91,32 @@ class Piece:
 				if blockValue == 1:
 					petrifiedStructure[y+self.pos[1]][x+self.pos[0]] = 1
 		return petrifiedStructure
+	
+	def rotate(self, turn):
+		if turn == 0: return
+		if turn > 0:
+			for i in range(turn):
+				self.structure = rotateMatrixCW(self.structure)
+		else:
+			for i in range(-turn):
+				self.structure = rotateMatrixCCW(self.structure)
+		pass
+
+
+def rotateMatrixCW(matrix: list[list[int]]):
+	rotatedMatrix: list[list[int]]
+	max_y = len(matrix[0]) - 1
+	max_x = len(matrix) - 1
+	for y in range(max_y + 1):
+		for x in range(max_x + 1):
+			rotatedMatrix[x][y] = matrix[y][x]
+	return rotatedMatrix
+
+def rotateMatrixCCW(matrix: list[list[int]]):
+	rotatedMatrix: list[list[int]]
+	max_y = len(matrix[0]) - 1
+	max_x = len(matrix) - 1
+	for y in range(max_y + 1):
+		for x in range(max_x + 1):
+			rotatedMatrix[max_y - x][y]
+	return rotatedMatrix
