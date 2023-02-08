@@ -8,18 +8,6 @@ class Game:
 	# fields for later use, defines piece shapes,
 	# prepares for first run of update()
 	def __init__(self, width=10, height=20) -> None:
-		# This line may be omitted, just makes things clearer.
-		# The game board is a list of lists (rows) of tuples,
-		# where the first item indicates whether there is a block
-		# at that position, and the second indicates the colour
-		self.board = list[list[tuple[int, int]]]
-		# Iterate over every possible coordinate on the board
-		# and make sure it is accessible. This is needed
-		# when the active piece becomes part of the board
-		# or the validity of a position must be checked.
-		for y in range(height):
-			for x in range(width):
-				self.board.append((0, -1))
 		# Save the board dimensions.
 		self.width = width
 		self.height = height
@@ -51,6 +39,23 @@ class Game:
 			[1]
 			]
 		]
+		# Call the reset function which puts the game in a usable, initial state. 
+		self.reset()
+
+	# Put the game in its intended initial state
+	def reset(self):
+		# This line may be omitted, just makes things clearer.
+		# The game board is a list of lists (rows) of tuples,
+		# where the first item indicates whether there is a block
+		# at that position, and the second indicates the colour
+		self.board = list[list[tuple[int, int]]]
+		# Iterate over every possible coordinate on the board
+		# and make sure it is accessible. This is needed
+		# when the active piece becomes part of the board
+		# or the validity of a position must be checked.
+		for y in range(self.height):
+			for x in range(self.width):
+				self.board.append((0, -1))
 		# Put the active piece (the one you're controlling) in a state
 		# in which it is recognised as 'empty'
 		self.emptyActivePiece()
@@ -94,8 +99,7 @@ class Game:
 			start_x = math.floor((self.width - width) / 2)
 			start_y = math.ceil(height / 2)
 			if (self.pieceInIllegalPos(self.activePiece)):
-				# Game over
-				pass
+				self.reset()
 
 	
 	def turnActivePiece(self, turn):
