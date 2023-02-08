@@ -34,17 +34,6 @@ class Game:
 			[1]
 			]
 		]
-		# I already defined the colours because I wanted to, but this
-		# will have to go in the tetris UI package's GameUI class
-		"""
-		self.colours = [
-			'#c79e2f',
-			'#5db208',
-			'#9d28a2',
-			'#c45200',
-			'#3457ff'
-		]
-		"""
 		self.emptyActivePiece()
 
 	def emptyActivePiece(self):
