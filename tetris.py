@@ -64,26 +64,57 @@ class Game:
 	def emptyActivePiece(self):
 		self.activePiece = Piece((0,0),[[0]],-1)
 
+	# Check whether the active piece is in the 'empty' state, and whether
+	# a new one has to be created
 	def activePieceIsEmpty(self):
 		return self.activePiece.piece_type == -1
 	
+	# Check whether a given piece is in an 'illegal position',
+	# more specifically whether it is outside the bounds of the
+	# game board or intersects with a board tile
 	def pieceInIllegalPos(self, piece: Piece):
+		# To do this, the piece is first 'petrified' which means translating
+		# the coordinates in the structure matrix into where they really are on the board
+		# By doing this we make the coordinates of the board and the piece 'comparable'
+		# which we need to know whether a piece's real coordinate is the same
+		# as an active board tile. There is some serious optimisation potential here,
+		# as we could also just iterate of the piece's structure matrix and add up the
+		# coordinates with x and y position respectively, and then only checking for these
+		# coordinates on the board.
 		pieceInGrid = piece.petrify()
+		# Now we iterate over all tiles of the petrified piece and if at some point there
+		# is an active tile on both the board and the petrified piece, we know we have an intersection
+		# The same goes for out of bound coordinates, of course.
 		for y in range(len(pieceInGrid)):
 			for x in range(len(pieceInGrid[y])):
+				# We only need to do something during an iteration if the petrified piece
+				# even has an active tile there 
 				if pieceInGrid[y][x] == 1:
+					# First, we check if we are out of bounds. If yes, we exit with result True.
 					if not x in range(self.width) or not y in range(self.height):
-						return False
-					if self.board[y][x] == 1:
-						return False
-		return True
+						return True
+					# Then we check whether we intersect with the board. If so, same thing.
+					if self.board[y][x][0] == 1:
+						return True
+		# If we never find anything during our checks, the position must be valid
+		# and we return with False (not illegal).
+		return False
 	
+	# Make the active piece a part of the board. This will be called in update() when
+	# the active piece hits the ground and can no longer move.
 	def activePieceToBoard(self):
+		# Again, we petrify. Reasoning behind this is derivable from the
+		# pieceInIllegalPos() explanation.
 		petrifiedStructure = self.activePiece.petrify()
+		# We then iterate over the board, again with huge improvement potential.
+		# See the pieceInIllegalPos() explanation for as to why that is.
 		for y in range(self.height):
 			for x in range(self.width):
 				if petrifiedStructure[y][x] == 1:
+					# If our soon-not-to-be active piece has a tile at the given position,
+					# we activate that tile in the game board and set it's type to the active piece's
 					self.board[y][x] = (1, self.activePiece.piece_type)
+		# When we're done, we empty the active piece so the update function will create a new one.
 		self.emptyActivePiece()
 
 	def update(self):
