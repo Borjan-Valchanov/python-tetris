@@ -1,4 +1,5 @@
 import math
+import copy
 import random
 
 # This class describes the Tetris game from an abstract point of view
@@ -33,7 +34,6 @@ class Game:
 			[1]
 			]
 		]
-		self.turn = 0
 		# I already defined the colours because I wanted to, but this
 		# will have to go in the tetris UI package's GameUI class
 		"""
@@ -63,17 +63,43 @@ class Game:
 					if self.board[y][x] == 1:
 						return False
 		return True
+	
+	def activePieceToBoard(self):
+		petrifiedStructure = self.activePiece.petrify()
+		for y in range(self.height):
+			for x in range(self.width):
+				if petrifiedStructure[y][x] == 1:
+					self.board[y][x] = 1
+		self.emptyActivePiece()
 
 	def update(self):
 		if (self.activePieceIsEmpty()):
 			piece_type = random.randrange(0, len(self.pieces))
-			dimension = len(self.pieces[piece_type])
-			start_x = math.floor((self.width - dimension) / 2)
-			start_y = math.ceil(dimension / 2)
+			height = len(self.pieces[piece_type])
+			width = len(self.pieces[piece_type][0])
+			start_x = math.floor((self.width - width) / 2)
+			start_y = math.ceil(height / 2)
 			if (self.pieceInIllegalPos(self.activePiece)):
 				# Game over
 				pass
-			
+			nextStagePiece = copy.deepcopy(self.activePiece)
+			nextStagePiece.pos[1] = nextStagePiece.pos[1] + 1
+			if self.pieceInIllegalPos(nextStagePiece):
+				self.activePieceToBoard()
+
+	
+	def turnActivePiece(self, turn):
+		if turn == 0: return
+		turnedPiece = copy.deepcopy(self.activePiece)
+		turnedPiece.rotate(turn)
+		if self.pieceInIllegalPos(turnedPiece): return
+		self.activePiece = turnedPiece
+	
+	def moveActivePiece(self, direction):
+		movedPiece = copy.deepcopy(self.activePiece)
+		movedPiece.pos = (movedPiece.pos[0] + direction - 1, movedPiece[1] + (direction % 2))
+		if self.pieceInIllegalPos(movedPiece): return
+		self.activePiece = movedPiece
 
 # This class describes a piece in Tetris
 class Piece:
