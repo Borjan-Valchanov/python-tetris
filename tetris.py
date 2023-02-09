@@ -117,30 +117,71 @@ class Game:
 		# When we're done, we empty the active piece so the update function will create a new one.
 		self.emptyActivePiece()
 
+	# This is the update method. Here, the game's state is changed according to the rules of the game.
 	def update(self):
+		# We will need to move the active piece to its next, lower position (falling)
+		# This, however, should only be done if the active piece is not empty 
 		if not self.activePieceIsEmpty():
+			# First, we will need to check whether the next position will even be a valid one.
+			# To do this, we will first create a copy of the active piece.
 			nextStagePiece = copy.deepcopy(self.activePiece)
+			# We will then move it down by a tile, according to how the active piece will move
 			nextStagePiece.pos[1] = nextStagePiece.pos[1] + 1
+			# Then, we check whether the resulting piece is in an illegal position.
 			if self.pieceInIllegalPos(nextStagePiece):
+				# If so, this means we have "hit the ground", so we insert the active piece into
+				# the game board
 				self.activePieceToBoard()
+			else:
+				# If this is not the case however, we can safely move the active piece to the
+				# new position. We simply do this by assigning our probing piece from before.
+				self.activePiece = nextStagePiece
+		# Now, we check whether the active piece is empty. This state can be reached either
+		# when we hit the ground in the previous piece of code, or we just started/restarted the game.
 		if self.activePieceIsEmpty():
+			# We now take steps to create a new piece.
+			# We will first choose a random piece type (the shape) that will be spawned.
 			piece_type = random.randrange(0, len(self.pieces))
+			# We then retrieve the dimensions of the piece to determine with what offset it will need to be spawned
 			height = len(self.pieces[piece_type])
 			width = len(self.pieces[piece_type][0])
+			# Here, we determine the spawn offset. We want the piece to be centered horizontally.
+			# Thus, our x offset will be half the width of the game board minus half of the piece width,
+			# which we can also express as (width_game - width_piece) / 2
 			start_x = math.floor((self.width - width) / 2)
-			start_y = math.ceil(height / 2)
+			# We then initialise a new piece. Woohoo!
+			self.activePiece = Piece((start_x, 0), self.pieces[piece_type], piece_type)
+			# If the newly created piece is in an illegal position now, the game board is blocked from accepting
+			# any new pieces. We have a game over.
 			if (self.pieceInIllegalPos(self.activePiece)):
+				# We implement this "Game Over" by just resetting.
+				# You can do better, player. Try again.
 				self.reset()
 
-	
+	# This is one of the controls needed to interact with the game.
+	# We want to be able to turn the piece to hopefully achieve an advantageous game state.
 	def turnActivePiece(self, turn):
-		if turn == 0: return
+		# If the amount to be turned is divisble by 4 without a remainder, we will just achieve
+		# the same rotation anyways, so we don't need to do anything and can just exit.
+		if turn % 4 == 0: return
+		# We then do something similar as in the update method:
+		# We create a copy of the active piece,
+		# Apply the desired manipulation to it,
+		# and check whether its position is now illegal.
+		# If so, don't apply the manipulation, if not, go ahead.
 		turnedPiece = copy.deepcopy(self.activePiece)
 		turnedPiece.rotate(turn)
 		if self.pieceInIllegalPos(turnedPiece): return
 		self.activePiece = turnedPiece
-	
+
+	# This is one of the controls needed to interact with the game.
+	# We want to be able to move the piece horizontally to hopefully achieve an advantageous game state.
 	def moveActivePiece(self, direction):
+		# We then do something similar as in the update method:
+		# We create a copy of the active piece,
+		# Apply the desired manipulation to it,
+		# and check whether its position is now illegal.
+		# If so, don't apply the manipulation, if not, go ahead.
 		movedPiece = copy.deepcopy(self.activePiece)
 		movedPiece.pos = (movedPiece.pos[0] + direction - 1, movedPiece[1] + (direction % 2))
 		if self.pieceInIllegalPos(movedPiece): return
