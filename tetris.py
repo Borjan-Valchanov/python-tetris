@@ -189,6 +189,13 @@ class Game:
 
 # This class describes a piece in Tetris
 class Piece:
+	# The constructor. This is (mainly) supposed to be a data type.
+	# Our parameters (that we assign to fields) are:
+	# pos:			A 2D position (on the game board)
+	# structure:	A 2D matrix that depicts what tiles make up the piece
+	# piece_type:	An integer value that is used to represent the "type" (shape) the
+	#				piece has on an abstract level. This will later be used by tetrisui.GameUI
+	#				to decide what colour will be assigned to the piece.
 	def __init__(self, pos: tuple[int,int], structure: list[list[int]], piece_type: int):
 		self.pos = pos
 		self.structure = structure
