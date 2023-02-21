@@ -201,10 +201,17 @@ class Piece:
 		self.structure = structure
 		self.piece_type = piece_type
 	
+	# For reasons explained in the tetris.Game class, we are going to want to have a method
+	# available that returns us a matrix of the piece with coordinates according to the
+	# game board
+	# This method does this.
 	def petrify(self):
-		petrifiedStructure: list[list[int]] = []
+		# First, we will assign the dimensions of the structure matrix to
+		# dedicated variables for easier use later on.
 		width = len(self.structure[0])
 		height = len(self.structure)
+		# We will then use the initialiseMNMatrix() method to create a two-dimensional array
+		# that fulfills the size requirements of the petrified structure
 		petrifiedStructure = initialiseMNMatrix(width + self.pos.x, height + self.pos.y)
 		for y in range(len(self.structure)):
 			for x in range(len(self.structure[y])):
